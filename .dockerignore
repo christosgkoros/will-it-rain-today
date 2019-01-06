@@ -1,0 +1,6 @@
+/client-browser/node_modules*
+/.Rproj.user*
+/.Rhistory
+*/.git*
+*/.idea*
+*.iml
