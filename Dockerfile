@@ -10,9 +10,9 @@ RUN npm run build
 FROM trestletech/plumber as production-stage
 MAINTAINER meldon <chr.goros@gmail.com>
 
-COPY --from=build-stage /app/dist /app/client-browser/dist
-
 RUN R -e "install.packages('countrycode')"
+
+COPY --from=build-stage /app/dist /app/client-browser/dist
 
 COPY    processed    /app/processed
 COPY    start.R      /app/

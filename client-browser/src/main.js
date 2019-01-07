@@ -9,7 +9,7 @@ Vue.config.productionTip = false
 Vue.use(VueResource);
 Vue.use(VueMaterial);
 
-Vue.prototype.$serverHost = 'http://localhost:8000';
+Vue.prototype.$serverHost = "";
 
 new Vue({
   render: h => h(App),
