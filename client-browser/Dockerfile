@@ -1,10 +1,12 @@
 # client-browser build stage
-FROM node:9.11.1-alpine as build-stage
+FROM node:10.21.0-jessie as build-stage
+RUN npm install yarn
 WORKDIR /app
 COPY package.json ./
-RUN npm install
+COPY yarn.lock ./
+RUN yarn install
 COPY . ./
-RUN npm run build
+RUN yarn run build
 
 # production stage
 FROM meldon/willitrain

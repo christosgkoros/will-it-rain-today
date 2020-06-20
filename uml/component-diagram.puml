@@ -1,0 +1,44 @@
+@startuml
+
+
+
+package "Clients " {
+[Browser client]
+[Mobile client]
+}
+
+package "3rd-party" {
+HTTP - [ECAD]
+}
+
+
+
+cloud AWS {
+
+package "Web" {
+HTTPS - [R API]
+[Browser client] -- HTTPS
+[Mobile client] -- HTTPS
+}
+
+package "Process" {
+[Data Process]
+[Data Download] - HTTP
+}
+
+package "Data" {
+NFS - [Data volume]: fetch  / process / store  data
+[R API] .. NFS
+[Data Process] ..> NFS
+[Data Download] ..> NFS
+}
+
+
+}
+
+
+
+
+
+
+@enduml
