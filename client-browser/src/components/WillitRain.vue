@@ -3,6 +3,7 @@
         <div class="md-layout md-gutter">
             <div class="md-layout-item">
                 <md-field>
+                    <label for="country">Country</label>
                     <md-select name="country" id="country" v-model="selectedCountry" placeholder="Country">
                         <md-option v-bind:key="country.code" v-for="country in countries" :value="country.code">{{country.name}}</md-option>
                     </md-select>
@@ -11,6 +12,7 @@
 
             <div class="md-layout-item">
                 <md-field>
+                    <label for="station">Station</label>
                     <md-select v-model="selectedStation" name="station" id="station" placeholder="Station">
                         <md-option v-bind:key="station.id" v-for="station in stations" :value="station.id">{{station.name}}</md-option>
                     </md-select>
@@ -23,12 +25,12 @@
         <div class="md-elevation-10">
             <md-table>
                 <md-table-toolbar class="md-primary">
-                    <span class="md-title percentages-title">Percentages</span>
+                    <span class="md-title percentages-title">Data <i>(last 50 years)</i></span>
                 </md-table-toolbar>
                 <md-table-row>
                     <md-table-head md-numeric>Day of the month</md-table-head>
                     <md-table-head md-numeric>Years with rain</md-table-head>
-                    <md-table-head md-numeric>Percentage for rain</md-table-head>
+                    <md-table-head md-numeric>Chance of rain</md-table-head>
                 </md-table-row>
 
                 <md-table-row v-bind:key="month.day" v-for="month in rainpercetageArray">
@@ -39,6 +41,7 @@
 
             </md-table>
         </div>
+        <div> <p class="diclaimer">Data source: <a href="https://www.ecad.eu">https://www.ecad.eu</a></p></div>
     </div>
 </template>
 
@@ -65,6 +68,7 @@
                 this.selectedStation=null;
                 this.showOrHideMonthPicker();
                 this.getStations();
+                this.rainpercetageArray = [];
             }
             ,selectedStation: function () {
                 this.showOrHideMonthPicker();
@@ -96,17 +100,24 @@
                     this.showMonthPicker = false;
                 }
             }
-            , getPercentages() {
-                var url = this.$serverHost+"/rainpercentage?" +
-                    "stationid="+this.selectedStation+
-                    "&month="+this.selectedMonth
-                this.$http.get(url).then(
-                    response => {
-                        this.rainpercetageArray = response.body;
-                    });
+            , getPercentages: function () {
+                var url = this.$serverHost + "/rainpercentage?" +
+                    "stationid=" + this.selectedStation +
+                    "&month=" + this.selectedMonth
+                if (!this.isEmpty(this.selectedMonth) && !this.isEmpty(this.selectedStation)) {
+                    this.$http.get(url).then(
+                        response => {
+                            this.rainpercetageArray = response.body;
+                        });
+                }
+            }
+            , isEmpty(input) {
+            return input==null || input==="";
             }
         }
     };
+
+
 </script>
 
 <style scoped>
@@ -130,5 +141,8 @@
 
     .percentages-title {
         text-align: center;
+    }
+    .diclaimer {
+        margin-top: 20px;
     }
 </style>

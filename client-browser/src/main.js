@@ -9,7 +9,13 @@ Vue.config.productionTip = false
 Vue.use(VueResource);
 Vue.use(VueMaterial);
 
-Vue.prototype.$serverHost = "";
+
+//define a specific host for the REST API
+//Vue.prototype.$serverHost = "http://localhost:8000";
+
+if (!Vue.prototype.$serverHost) {
+  Vue.prototype.$serverHost="";
+}
 
 new Vue({
   render: h => h(App),
