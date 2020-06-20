@@ -3,7 +3,7 @@
     <md-app-toolbar class="md-primary">
       <span class="md-title">Will it rain</span>
     </md-app-toolbar>
-    <md-app-content><WillitRain msg="Calculate the change to rain today"/></md-app-content>
+    <md-app-content><WillitRain msg="Calculate the chance of rain for a given day"/></md-app-content>
   </md-app>
 </template>
 
