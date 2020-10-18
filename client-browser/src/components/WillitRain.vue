@@ -19,13 +19,17 @@
                 </md-field>
             </div>
         </div>
-        <div class="showMonthPicker" v-if="showMonthPicker">
+        <div id="showMonthPicker" v-if="showMonthPicker">
             <md-radio v-bind:key="key" v-for="(value,key) in months" v-model="selectedMonth" :value="key">{{value}}</md-radio>
+        </div>
+        <div v-if="showChart" id="chart">
+            <line-chart :chartData= "chartData"
+                        :options="chartOptions"/>
         </div>
         <div class="md-elevation-10">
             <md-table>
                 <md-table-toolbar class="md-primary">
-                    <span class="md-title percentages-title">Data <i>(last 50 years)</i></span>
+                    <span class="md-title percentages-title">Data <em>(last 50 years)</em></span>
                 </md-table-toolbar>
                 <md-table-row>
                     <md-table-head md-numeric>Day of the month</md-table-head>
@@ -46,20 +50,43 @@
 </template>
 
 <script>
+    import LineChart from "@/components/LineChart";
+    const months = {
+      1: "January",
+      2: "February",
+      3: "March",
+      4: "April",
+      5: "May",
+      6: "June",
+      7: "July",
+      8: "August",
+      9: "September",
+      10: "Octomber",
+      11: "November",
+      12: "December"
+    }
     export default {
-        data() {
-            return {
-                selectedCountry: "",
-                countries: [],
-                selectedStation: null,
-                stations: [],
-                months: {1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",7:"July",8:"August",9:"September",
-                    10:"Octomber",11:"November",12:"December"},
-                selectedMonth: "",
-                showMonthPicker: false,
-                rainpercetageArray: []
-            };
-        },
+      components: {LineChart},
+      data: function () {
+        return {
+          selectedCountry: "",
+          countries: [],
+          selectedStation: null,
+          stations: [],
+          months: months,
+          selectedMonth: "",
+          showMonthPicker: false,
+          rainpercetageArray: [],
+
+          //Chart
+          showChart: false,
+          chartData: {},
+          chartOptions: {
+            responsive: true,
+            maintainAspectRatio: false,
+          }
+        };
+      },
         created() {
             this.getCountries();
         },
@@ -90,7 +117,7 @@
                 var url = this.$serverHost+"/stations/" +this.selectedCountry;
                 this.$http.get(url).then(
                     response => {
-                        this.stations = response.body;
+                        response.body.length > 1000 ? this.stations = response.body.slice(0, 1000) : this.stations = response.body;
                     });
             }
             , showOrHideMonthPicker() {
@@ -98,6 +125,7 @@
                     this.showMonthPicker = true;
                 } else {
                     this.showMonthPicker = false;
+                    this.showChart = false;
                 }
             }
             , getPercentages: function () {
@@ -105,15 +133,43 @@
                     "stationid=" + this.selectedStation +
                     "&month=" + this.selectedMonth
                 if (!this.isEmpty(this.selectedMonth) && !this.isEmpty(this.selectedStation)) {
-                    this.$http.get(url).then(
-                        response => {
-                            this.rainpercetageArray = response.body;
-                        });
+                    this.$http.get(url).then( response => this.updateData(response));
+
                 }
             }
-            , isEmpty(input) {
+          , isEmpty(input) {
             return input==null || input==="";
+          }
+          , updateData(response) {
+            let percentages = [];
+            let years = [];
+            let month = this.selectedMonth;
+            this.rainpercetageArray = response.body;
+            this.rainpercetageArray.forEach(function (x) {
+              x.day = x.day + "/" + month;
+              percentages.push(x.percentage);
+              years.push(x.years_with_rain);
+            });
+            this.updateChart(percentages, years);
+          }
+          , updateChart(percentages ,years) {
+            this.chartData = {
+              labels: Array.from({length: this.rainpercetageArray.length}, (_, i) => i + 1 + "/" + this.selectedMonth), //create an array with values from 1 - 31,
+              datasets: [
+                {
+                  label: 'Chance of rain',
+                  backgroundColor: '#f87979',
+                  data: percentages //will be populated dynamically
+                },
+                {
+                  label: 'Years with rain',
+                  backgroundColor: '#00ccff',
+                  data: years //will be populated dynamically
+                }
+              ]
             }
+            this.showChart = true;
+          }
         }
     };
 
@@ -121,24 +177,6 @@
 </script>
 
 <style scoped>
-    .home-panel {
-        vertical-align: center;
-        font-size: 20px;
-        margin: 15px;
-    }
-
-    .md-table-cell.md-numeric {
-        text-align: center;
-    }
-
-    .md-table-head.md-numeric {
-        text-align: center;
-    }
-
-    .description-label {
-        margin-bottom: 15px;
-    }
-
     .percentages-title {
         text-align: center;
     }
