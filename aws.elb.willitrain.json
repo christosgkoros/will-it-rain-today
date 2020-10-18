@@ -1,7 +1,7 @@
 {
 	"AWSEBDockerrunVersion": "1",
 	"Image": {
-		"Name": "meldon/willitrain:1.0.5"
+		"Name": "meldon/willitrain:1.1.0"
 	},
 	"Ports": [
 		{"ContainerPort" : "8000"}

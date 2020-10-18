@@ -8,28 +8,26 @@ package "Clients " {
 }
 
 package "3rd-party" {
-HTTP - [ECAD]
+[ECAD]
 }
-
-
 
 cloud AWS {
 
 package "Web" {
-HTTPS - [R API]
-[Browser client] -- HTTPS
-[Mobile client] -- HTTPS
+[R API]
+[Browser client] --> [R API]
+[Mobile client] --> [R API]
 }
 
 package "Process" {
+[Data Download] -> ECAD
 [Data Process]
-[Data Download] - HTTP
 }
 
 package "Data" {
 NFS - [Data volume]: fetch  / process / store  data
 [R API] .. NFS
-[Data Process] ..> NFS
+[Data Process] <..> NFS
 [Data Download] ..> NFS
 }
 
