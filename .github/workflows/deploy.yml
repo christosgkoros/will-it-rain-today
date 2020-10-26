@@ -41,7 +41,6 @@ jobs:
     - name: Test
       run: |
         echo $RELEASE_VERSION
-        echo ${{ env.RELEASE_VERSION }}
           
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
