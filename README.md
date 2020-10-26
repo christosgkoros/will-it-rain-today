@@ -1,7 +1,4 @@
 # will it rain app
-```
-version 0.1.0
-```
 
 ## Build docker image
 ```
