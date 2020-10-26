@@ -11,8 +11,6 @@ RUN yarn run build
 # production stage
 FROM trestletech/plumber as production-stage
 MAINTAINER meldon <chr.goros@gmail.com>
-LABEL version=1.1.0
-ENV VERSION 1.1.0
 
 RUN R -e "install.packages('countrycode')"
 
